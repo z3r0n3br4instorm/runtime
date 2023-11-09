@@ -3,28 +3,44 @@ import sys
 import subprocess
 import json
 import time
+from colorama import Back, Style
+
+global prevData, loopbackToModel
+prevData = ""
+loopbackToModel = ""
 
 def commGPT(data):
-    __commOS = 'python gpt_response.py \"'+str(data)+'\"'
+    global prevData, loopbackToModel
+    prevData = prevData+data
+    __commOS = 'python gpt_response.py \"'+str(prevData)+'\"'
     return subprocess.check_output(__commOS, shell=True, stderr=subprocess.STDOUT, universal_newlines=True)
 
 def split_string(string):
     return [c for c in string]
 
 if __name__ == "__main__":
-    print("ZeroneLabs | RunTime v1.0")
+    os.system("clear")
+    print(Back.GREEN + " | ZeroneLabs | ♜ RunTime v2.0 | PaLM v2 | "+Back.BLACK)
+    print("\n\n")
     while True:
-        get_input = input("> ")
+        print(Back.BLACK)
+        get_input = input("(⌐■_■)> ")
+        if get_input == "clr_mem":
+            prevData = ""
+            os.system("tput bel")
+            print(Back.RED+"Memory Reset !"+Back.BLACK)
+            continue
         data = commGPT(get_input)
+        loopbackToModel = data
         for i in split_string(data):
             if i != "`":
                 time.sleep(0.001)
                 sys.stdout.write("\033[1m"+i)
                 sys.stdout.flush()
         if "```" in data:
-            print("Script detected !, Autorun")
+            check_in = input("Script detected !, Run ? ( •_•) >")
             try:
-                if True:
+                if check_in == "y" or check_in == "Y":
                     string_data = data.replace("```","")
                     if string_data.split("\n")[0].lower() == "bash":
                         print("Executing bash script")
@@ -61,5 +77,5 @@ if __name__ == "__main__":
                         os.system("rm TempScript.c")
                         os.system("rm temp")
             except:
-                print("Program Failed to run !")
+                print("/ ! \\")
         sys.stdout.write("\033[0m")
